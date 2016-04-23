@@ -9,15 +9,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.awt.EventQueue;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.util.Random;
+import javax.swing.*;
 
 //this panel creates the background screen of the game and a ball on it
 public class PingPong extends JPanel implements ActionListener, KeyListener{
@@ -39,8 +45,10 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
     private float paddleSpeed = 5;
 
     private Image backgroundImage;
+    
 
-    //construct a PongPanel
+    
+  //construct a PongPanel
     public PingPong(){
 
         try {
@@ -91,6 +99,7 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
         float nextBallRight = ballX + diameter + ballDeltaX;
         float nextBallTop = ballY + ballDeltaY;
         float nextBallBottom = ballY + diameter + ballDeltaY;
+        Boolean haha=false;
         
         
         
@@ -99,16 +108,14 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
         //ball bounces off top and bottom of screen
         if (nextBallTop < 0 || nextBallBottom > getHeight()) {
             ballDeltaY *= -1;
-        }
+        }       
         
-        if(nextBallLeft < playerOneLeft){
+        if(nextBallLeft < playerOneLeft+10){
         	System.out.println(ballY);
         	System.out.println(playerOneTop);
         	if(ballY < (playerOneTop - diameter) || (ballY >playerOneBottom)){
-        		System.out.println("PLAYER TWO SCORED");
-                ballY=250;
-                ballX=250;
-                ballDeltaX =(-1)*(ballDeltaX/Math.abs(ballDeltaX))*3;
+        		if( ballX < playerOneRight-27.5){
+        			haha=true;        		}
         	}
         	else{
         		ballDeltaX=(-1)*ballDeltaX;
@@ -133,6 +140,19 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
         	}
         	
         }
+        
+        if(haha){
+        	haha = false;
+        	System.out.println("PLAYER TWO SCORED");
+            ballY=250;
+            ballX=250;
+            ballDeltaX =((float)0.5+(float)Math.random())*(-1)*(ballDeltaX/Math.abs(ballDeltaX))*3;
+            ballDeltaY =((float)0.5+(float)Math.random())*(-1)*(ballDeltaY/Math.abs(ballDeltaY))*3;
+        }      
+
+
+        
+        
         
       //ball bounces off left of the screen or collides with the paddle
 //        if (nextBallLeft < playerOneRight) {
@@ -192,6 +212,7 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
         //stuff has moved, tell this JPanel to repaint itself
         repaint();
     }
+
 
     //paint the ball and the paddle
     public void paintComponent(Graphics g){
