@@ -1,6 +1,6 @@
 package cyberthieves;
 
-
+import java.math.*;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -22,21 +22,21 @@ import javax.swing.Timer;
 //this panel creates the background screen of the game and a ball on it
 public class PingPong extends JPanel implements ActionListener, KeyListener{
 
-    private int ballX = Main.windowWidth/2;
-    private int ballY = Main.windowHeight/2;
-    private int diameter = 20;
-    private int ballDeltaX = -3;
-    private int ballDeltaY = 3;
+    private float ballX = Main.windowWidth/2;
+    private float ballY = Main.windowHeight/2;
+    private float diameter = 20;
+    private float ballDeltaX = -3;
+    private float ballDeltaY = 3;
 
     private boolean upPressed = false;
     private boolean downPressed = false;
 
-    private int paddleOneX = 20;
-    private int paddleOneY = Main.windowHeight/2;
-    private int paddleOneWidth = 10;
-    private int paddleOneHeight = 50;
+    private float paddleOneX = 20;
+    private float paddleOneY = Main.windowHeight/2;
+    private float paddleOneWidth = 15;
+    private float paddleOneHeight = 80;
 
-    private int paddleSpeed = 5;
+    private float paddleSpeed = 5;
 
     private Image backgroundImage;
 
@@ -65,58 +65,120 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
     }
 
     public void update(){
-
+    	
+    	
+    	//moving the paddle upward
         if (upPressed) {
             if (paddleOneY-paddleSpeed > 0) {
-                paddleOneY -= paddleSpeed;
+                paddleOneY -= 1.1*paddleSpeed;
             }
         }
+        
+        //moving the ball downward
         if (downPressed) {
             if (paddleOneY + paddleSpeed + paddleOneHeight < getHeight()) {
-                paddleOneY += paddleSpeed;
+                paddleOneY += 1.1*paddleSpeed;
             }
         }
 
-        int playerOneRight = paddleOneX + paddleOneWidth;
-        int playerOneLeft = paddleOneX;
-        int playerOneTop = paddleOneY;
-        int playerOneBottom = paddleOneY + paddleOneHeight;
+        float playerOneRight = paddleOneX + paddleOneWidth;
+        float playerOneLeft = paddleOneX;
+        float playerOneTop = paddleOneY;
+        float playerOneBottom = paddleOneY + paddleOneHeight;
 
         //where will the ball be after it moves
-        int nextBallLeft = ballX + ballDeltaX;
-        int nextBallRight = ballX + diameter + ballDeltaX;
-        int nextBallTop = ballY + ballDeltaY;
-        int nextBallBottom = ballY + diameter + ballDeltaY;
+        float nextBallLeft = ballX + ballDeltaX;
+        float nextBallRight = ballX + diameter + ballDeltaX;
+        float nextBallTop = ballY + ballDeltaY;
+        float nextBallBottom = ballY + diameter + ballDeltaY;
+        
+        
+        
 
 
         //ball bounces off top and bottom of screen
         if (nextBallTop < 0 || nextBallBottom > getHeight()) {
             ballDeltaY *= -1;
         }
-
-        //ball bounces off left of the screen or collides with the paddle
-        if (nextBallLeft < playerOneLeft) {
-            //is it going to miss the paddle?
-            if (nextBallTop > playerOneBottom || nextBallBottom < playerOneTop) {
-
-                System.out.println("PLAYER TWO SCORED");
+        
+        if(nextBallLeft < playerOneLeft){
+        	System.out.println(ballY);
+        	System.out.println(playerOneTop);
+        	if(ballY < (playerOneTop - diameter) || (ballY >playerOneBottom)){
+        		System.out.println("PLAYER TWO SCORED");
                 ballY=250;
                 ballX=250;
-            }
-            else {
-                ballDeltaX *= -1;
-            }
+                ballDeltaX =(-1)*(ballDeltaX/Math.abs(ballDeltaX))*3;
+        	}
+        	else{
+        		ballDeltaX=(-1)*ballDeltaX;
+        		if(upPressed){        		
+            		if(ballDeltaY <= -6){
+            		}
+            		else{
+            			ballDeltaY = ballDeltaY - paddleSpeed/2;
+            		}       		 
+            		       		
+            	}
+            	else if(downPressed){
+            		if(ballDeltaY>= 6){
+            		}
+            		else{
+            			ballDeltaY = ballDeltaY + paddleSpeed/2;
+            		}
+            		
+            	} 
+            	else{}
+        		
+        	}
+        	
         }
+        
+      //ball bounces off left of the screen or collides with the paddle
+//        if (nextBallLeft < playerOneRight) {
+//            //is it going to miss the paddle?
+//            if (ballY > playerOneBottom || ballY < playerOneTop+diameter) {
+//                ;
+//            }
+//            else {
+//                ballDeltaX *= -1;
+//            }
+//        }
+        
+//        if (nextBallLeft < playerOneRight) {
+//        	if ((nextBallLeft < playerOneLeft) && (ballY>=playerOneTop+20) &&(nextBallBottom >= playerOneTop-3) || ((nextBallLeft < playerOneLeft)&&(ballY<=playerOneBottom)&& (nextBallTop >= playerOneBottom-3))){
+//            	System.out.println("corner Encountered");
+//            	System.out.println("initial "+ballDeltaY);
+//        		ballDeltaY =(-1)*(ballDeltaY/Math.abs(ballDeltaY))*3;
+//            	System.out.println("final "+ballDeltaY);
+//
+//            }
+//        	       	
+//        	else if (nextBallTop < playerOneBottom || nextBallBottom > playerOneTop) {
+//                ballDeltaX *= -1;
+//            }    	
+//        	else if(upPressed){        		
+//        		if(ballDeltaY <= -6){
+//        		}
+//        		else{
+//        			ballDeltaY = ballDeltaY - paddleSpeed/2;
+//        		}       		 
+//        		       		
+//        	}
+//        	else if(downPressed){
+//        		if(ballDeltaY>= 6){
+//        		}
+//        		else{
+//        			ballDeltaY = ballDeltaY + paddleSpeed/2;
+//        		}
+//        		
+//        	} 
 
-        if (nextBallLeft < playerOneRight) {
-            if ((nextBallTop < playerOneBottom) && (ballY > playerOneBottom) || (nextBallBottom > playerOneTop) && (ballY < playerOneTop)) {
-                ballDeltaY *= -1;
-            }
-            else if (nextBallTop < playerOneBottom || nextBallBottom > playerOneTop) {
-                ballDeltaX *= -1;
-            }
+//        }
+        
+        
 
-        }
+       
 
         //ball bounces off right of the screen
         if (nextBallRight > getWidth()) {
@@ -139,9 +201,9 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
 
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 
-        g.fillOval(ballX, ballY, diameter, diameter);
+        g.fillOval((int)ballX, (int)ballY, (int)diameter, (int)diameter);
 
-        g.fillRect(paddleOneX, paddleOneY, paddleOneWidth, paddleOneHeight);
+        g.fillRect((int)paddleOneX, (int)paddleOneY, (int)paddleOneWidth, (int)paddleOneHeight);
     }
 
     public void keyTyped(KeyEvent e) {}
