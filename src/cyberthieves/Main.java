@@ -1,4 +1,4 @@
-package com.cyberthieves;
+package cyberthieves;
 
 import java.awt.*;
 import javax.swing.*;

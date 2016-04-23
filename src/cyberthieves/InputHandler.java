@@ -1,4 +1,4 @@
-package com.cyberthieves;
+package cyberthieves;
 
 import java.awt.Component;
 import java.awt.event.*;

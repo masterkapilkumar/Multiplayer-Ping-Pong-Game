@@ -1,4 +1,4 @@
-package com.cyberthieves;
+package cyberthieves;
 
 
 import java.awt.Color;
@@ -44,7 +44,8 @@ public class PingPong extends JPanel implements ActionListener, KeyListener{
     public PingPong(){
 
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/res/background-2.jpg"));
+//        	System.out.println(getClass().getResource("/"));
+            backgroundImage = ImageIO.read(getClass().getResource("/background_img.jpg"));
         }
         catch (IOException ex) {
             ex.printStackTrace();
