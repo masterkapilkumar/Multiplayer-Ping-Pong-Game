@@ -13,6 +13,7 @@ import cyberthieves.entities.paddleM;
 import cyberthieves.net.packets.Packet;
 import cyberthieves.net.packets.Packet.PacketTypes;
 import cyberthieves.net.packets.Packet00Login;
+import cyberthieves.net.packets.Packet01Disconnect;
 
 public class GameServer extends Thread{
 	private DatagramSocket socket;
@@ -37,13 +38,7 @@ public class GameServer extends Thread{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
-			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());
-			
-//			String message = new String(packet.getData()).trim();
-//			System.out.println("CLIENT >"+ new String(packet.getData()).trim());
-//			if(message.equals("harish")){
-//				this.sendData("pong".getBytes(),packet.getAddress(),packet.getPort());				
-//			}			
+			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());			
 		}
 	}
 	
@@ -59,14 +54,13 @@ public class GameServer extends Thread{
 			case LOGIN:					
 				packet = new Packet00Login(data);
 				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has connected2...");
-//				if(address.getHostAddress().equalsIgnoreCase("127.0.0.1))
-				paddleM paddle33 = new paddleM(((Packet00Login)packet).getUserName(),connectedPlayers.size(),address,port);
+				paddleM paddle33 = new paddleM(((Packet00Login)packet).getUserName(),0,address,port);
 				this.addConnection(paddle33,((Packet00Login)packet));
-//				if(paddle33 != null){
-//					this.connectedPlayers.add(paddle33);
-//					pingPong.allPaddle.add(paddle33);
-//					pingPong.player11 = paddle33;
-//				}
+				break;
+			case DISCONNECT:
+				packet = new Packet01Disconnect(data);
+				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet01Disconnect)packet).getUserName()+" has left the game...");
+				this.removeConnection((Packet01Disconnect)packet);
 				break;
 		}
 	}
@@ -86,7 +80,10 @@ public class GameServer extends Thread{
 				alreadyConnected = true;
 			}
 			else{
-				sendData(packet.getData(),p.ipAddress,p.port);					
+				sendData(packet.getData(),p.ipAddress,p.port);
+				packet = new Packet00Login(p.getuserName(), (int)p.x, (int)p.y);
+                sendData(packet.getData(), paddle33.ipAddress, paddle33.port);
+				
 			}		
 		}
 
@@ -94,6 +91,36 @@ public class GameServer extends Thread{
 			this.connectedPlayers.add(paddle33);
 		}
 	}
+	
+	//this function actually removes the user once disconnected from the game
+	public void removeConnection(Packet01Disconnect packet) {
+			this.connectedPlayers.remove(this.getPaddleIndex(packet.getUserName()));
+			packet.writeData(this);
+			
+	}
+	
+	
+	//loop through all the connected players and send the player with the given user name
+	public paddleM getPaddle(String userName){
+		for(paddleM p: this.connectedPlayers){
+			if(p.userName.equals(userName)){
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	//loop through all the connected players and return the index of the player with the given user name
+		public int getPaddleIndex(String userName){
+			int index = 0;
+			for(paddleM p: this.connectedPlayers){
+				if(p.userName.equals(userName)){
+					break;
+				}
+				index++;
+			}
+			return index;
+		}
 
 	public void sendData(byte[] data , InetAddress ipAddress, int port){
 		DatagramPacket packet = new DatagramPacket(data,data.length,ipAddress,port);

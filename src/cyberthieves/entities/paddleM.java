@@ -34,11 +34,12 @@ public class paddleM extends paddle2 {
 	public paddleM(String userName,int type,InetAddress ipAddress, int port)
 	{	
 		super(userName,10,10,1);
+		
 		if(type == 0){
 			this.x = 10;
 			this.y = 10;
 		}
-		else if(type == 1){
+		else{
 			this.x = 900-10;
 			this.y = 10;
 		}
@@ -51,23 +52,26 @@ public class paddleM extends paddle2 {
 	
 	public void update(PingPong game)
 	{	
-		if(game.upPressed){
-			if(y>=0){
-				y--;
+		if(type==game.type){
+			if(game.upPressed){
+				if(y>=0){
+					y--;
+				}
+				else{
+					y=0;
+				}
 			}
-			else{
-				y=0;
+			if(game.downPressed){
+				if(y<332){
+					y++;
+				}
+				else{
+					y=331;
+				}
+				
 			}
 		}
-		if(game.downPressed){
-			if(y<332){
-				y++;
-			}
-			else{
-				y=331;
-			}
-			
-		}
+		
 		
 		if(type == 0){
 			if(game.Ball.x + game.Ball.speed_x <= this.x+this.width){			

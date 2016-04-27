@@ -30,20 +30,22 @@ public class PingPong extends Canvas implements Runnable,ActionListener, KeyList
 	private Image back;
 	private static final long serialVersionUID=1L;
 	static boolean gameisrunning=false;
-	JFrame game_window;
+	public JFrame game_window;
 	public final int window_height=400;
 	public final int window_width=900;
 	public final Dimension gameSize=new Dimension(window_width,window_height);
 	private final String title="Ping Pong Game";
-	public static paddle2 player11;
+	public static paddle2 paddle23;
 	public static compu complayer;
 	public static ball Ball;
 	public ArrayList<paddle2> arrPaddle = new ArrayList<paddle2>();	
-	public List<paddleM> allPaddle = new ArrayList<paddleM>();
-	private GameClient socketClient;
+	public  List<paddleM> allPaddle = new ArrayList<paddleM>();
+	public GameClient socketClient;
 	public  GameServer socketServer;
 	public  boolean upPressed=false;
 	public boolean downPressed = false;
+	public int type;
+	public WindowHandler windowHandler;
 	
 	
 	
@@ -102,12 +104,20 @@ public class PingPong extends Canvas implements Runnable,ActionListener, KeyList
 		if(JOptionPane.showConfirmDialog(this,"Do you want to run server")==0){
 			socketServer = new GameServer(this);
 			socketServer.start();		
-		}		
+		}	
 		socketClient = new GameClient(this,"localhost");
 		socketClient.start();
+		windowHandler = new WindowHandler(this);
+		System.out.println(allPaddle.size()+" this is while creating first the server");
+		if(socketServer!=null){
+			this.type=0;
+			paddle23 = new paddleM(JOptionPane.showInputDialog(this,"enter a user name"),allPaddle.size(),null,-1);
+		}
+		else{
+			this.type=1;
+			paddle23 = new paddleM(JOptionPane.showInputDialog(this,"enter a user name"),1-allPaddle.size(),null,-1);
+		}
 		
-		
-		paddle2 paddle23 = new paddleM(JOptionPane.showInputDialog(this,"enter a user name"),allPaddle.size()+1,null,-1);
 		Packet00Login loginPacket = new Packet00Login(paddle23.getuserName());
 		allPaddle.add((paddleM)paddle23);
 	    if(socketServer != null){	    	

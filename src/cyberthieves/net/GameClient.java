@@ -11,6 +11,7 @@ import cyberthieves.PingPong;
 import cyberthieves.entities.paddleM;
 import cyberthieves.net.packets.Packet;
 import cyberthieves.net.packets.Packet00Login;
+import cyberthieves.net.packets.Packet01Disconnect;
 import cyberthieves.net.packets.Packet.PacketTypes;
 
 public class GameClient extends Thread {
@@ -60,15 +61,20 @@ public class GameClient extends Thread {
 				packet = new Packet00Login(data);
 				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has joined the game...");				
 //				if(address.getHostAddress().equalsIgnoreCase("127.0.0.1))
-				paddleM paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.socketServer.connectedPlayers.size(),address,port);
+				System.out.println(pingPong.allPaddle.size()+" this is while creating the client");
+				paddleM paddle33=null;
+				if(pingPong.socketServer!=null){
+					paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.allPaddle.size(),address,port);
+				}
+				else{
+					paddle33 = new paddleM(((Packet00Login)packet).getUserName(),1-pingPong.allPaddle.size(),address,port);
+				}				
 				pingPong.allPaddle.add(paddle33);
-//				if(paddle33 != null){
-//					this.connectedPlayers.add(paddle33);
-//					pingPong.allPaddle.add(paddle33);
-//					pingPong.player11 = paddle33;
-//				}
 				break;
 			case DISCONNECT:
+				packet = new Packet01Disconnect(data);
+				System.out.println("You left the game...");
+				pingPong.allPaddle.remove(1);
 				break;
 		}
 	}
