@@ -17,10 +17,10 @@ public abstract class Mob extends Entity {
 	}
 	
 	// This funtion help in moving the objects from one place to another
-	public void move(int xa, int ya){
+	public void setLocation(int xa, int ya){
 		if(xa !=0 && ya != 0){
-			move(xa,0);
-			move(0,ya);
+			setLocation(xa,0);
+			setLocation(0,ya);
 			return;
 		}
 		
