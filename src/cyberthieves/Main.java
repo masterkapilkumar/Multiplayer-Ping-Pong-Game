@@ -10,11 +10,10 @@ import javax.swing.*;
 
 public class Main extends JFrame {
 
-    static int windowWidth = 500;
-    static int windowHeight = 500;
+    public static int windowWidth = 500;
+    public static int windowHeight = 500;
     private JPanel cards;
     MainMenu menu;
-    PingPong game;
     SplashScreen splash;
 
     public static void main(String[] args){
@@ -35,15 +34,20 @@ public class Main extends JFrame {
 
         setLayout(new BorderLayout());
 
+        setSize(windowWidth, windowHeight);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);               //full screen
+        setUndecorated(true);                        //make the title bar invisible
+        windowWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        windowHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+
         menu = new MainMenu();
-        game = new PingPong();
         splash = new SplashScreen();
 
         splash.setFocusable(true);
         cards = new JPanel(new CardLayout());
 
         cards.add(splash, "Splash Screen");
-        cards.add(game, "Game");
+        cards.add(menu, "Menu");
 
         getContentPane().add(cards);
         splash.addKeyListener(new KeyListener() {
@@ -56,7 +60,7 @@ public class Main extends JFrame {
             public void keyPressed(KeyEvent e) {
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 cardLayout.next(cards);
-                game.start();
+                menu.requestFocusInWindow();
             }
 
             @Override
@@ -70,7 +74,7 @@ public class Main extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 CardLayout cardLayout = (CardLayout) cards.getLayout();
                 cardLayout.next(cards);
-                game.start();
+                menu.requestFocusInWindow();
             }
 
             @Override
@@ -91,11 +95,7 @@ public class Main extends JFrame {
         });
 
 
-        setSize(windowWidth, windowHeight);
-//        setExtendedState(JFrame.MAXIMIZED_BOTH);               //full screen
-//        setUndecorated(true);                        //make the title bar invisible
-//        windowWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-//        windowHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+
         setVisible(true);
 
     }

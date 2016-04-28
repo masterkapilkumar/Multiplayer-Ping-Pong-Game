@@ -2,11 +2,9 @@ package cyberthieves;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.*;
-import java.lang.Math;
-import cyberthieves.entities.*;
+
 public class ball {
-	int p=0;
+//	int p=0;
 	public float x;
 	public float y;
 	public int diameter=20;
@@ -30,7 +28,7 @@ public class ball {
 	{
 		//System.out.println(speed_y);
 		ball_shape.setBounds((int)x,(int)y,diameter,diameter);
-		collision_with_paddle(game);
+		collision_with_paddle();
 		
 		{
 		if(x<=0){
@@ -45,7 +43,7 @@ public class ball {
 			
 		}
 		
-		if (y+speed_y<=0 || y+speed_y+diameter >= 411){
+		if (y+speed_y<=0 || y+speed_y+diameter >= game.getHeight()){
 			
 //			System.out.println("Before "+speed_y);
 			if(speed_y !=0){
@@ -64,7 +62,7 @@ public class ball {
 		y+=(speed_y);
 			
 	}
-	private void collision_with_paddle(PingPong game)
+	private void collision_with_paddle()
 	{
 		paddlecollide=true;
 //		if (ball_shape.intersects(game.paddle22.margin))
@@ -88,8 +86,8 @@ public class ball {
 //			
 //			
 //		}
-		if(game.complayer !=null){
-			if (ball_shape.intersects(game.complayer.margin))
+		if(PingPong.complayer !=null){
+			if (ball_shape.intersects(PingPong.complayer.margin))
 			{
 				speed_x=-1*speed_x;
 				//speed_y= (speed_y+(game.complayer.speed));

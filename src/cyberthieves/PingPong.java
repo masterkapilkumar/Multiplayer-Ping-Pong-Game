@@ -1,7 +1,6 @@
 package cyberthieves;
 
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -33,14 +32,14 @@ public class PingPong extends Canvas implements Runnable,ActionListener, KeyList
 	public static paddle2 paddle23;
 	public static compu complayer;
 	public static ball Ball;
-	public ArrayList<paddle2> arrPaddle = new ArrayList<>();
+//	public ArrayList<paddle2> arrPaddle = new ArrayList<>();
 	public  List<paddleM> allPaddle = new ArrayList<>();
 	public GameClient socketClient;
 	public  GameServer socketServer;
 	public  boolean upPressed=false;
 	public boolean downPressed = false;
 	public int type;
-	public WindowHandler windowHandler;
+//	public WindowHandler windowHandler;
 	private Image backgroundImage;
 
 	public void run()
