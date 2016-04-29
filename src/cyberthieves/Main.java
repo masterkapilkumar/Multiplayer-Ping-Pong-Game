@@ -15,9 +15,10 @@ public class Main extends JFrame {
     private JPanel cards;
     MainMenu menu;
     SplashScreen splash;
-
+    static WindowHandler windowHandler;
     public static void main(String[] args){
         Main game = new Main();
+        windowHandler=new WindowHandler(game);
         game.initialize();
     }
 

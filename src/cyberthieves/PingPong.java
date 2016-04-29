@@ -34,7 +34,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public static compu complayer;
 	public Ball ball;
 	public  List<paddleM> allPaddle = new ArrayList<>();
-	public GameClient socketClient;
+	public static GameClient socketClient;
 	public  GameServer socketServer;
 	public  boolean upPressed=false;
 	public boolean downPressed = false;
@@ -109,7 +109,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	    loginPacket.writeData(socketClient);
 
 		new Thread(this).start();
-		Timer timer = new Timer(1000/60, this);
+		Timer timer = new Timer(1000/30, this);
 		timer.start();
 
 		
@@ -169,20 +169,17 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public void movePaddle(String userName, float x, float y){
 		if(!(userName.equals(this.userName))){
 			int index = this.getPaddleIndex(userName);
+			{
 			this.allPaddle.get(index).x = x;
 			this.allPaddle.get(index).y = y;
+			}
 		}
 
 	}
 	
 	
 	
-	public static void main(String[] args)
-	{
-		PingPong game=new PingPong();
-		game.start();
-		
-	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e){
         this.update();

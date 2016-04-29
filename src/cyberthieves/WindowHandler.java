@@ -5,16 +5,17 @@ import java.awt.event.WindowListener;
 
 import cyberthieves.net.packets.Packet01Disconnect;
 
-public class WindowHandler {
-/*
+//public class WindowHandler {
+
 public class WindowHandler implements WindowListener{
 
-	private final PingPong pingPong;
+	private final Main main;
 	
-	public WindowHandler(PingPong pingPong){
-		this.pingPong = pingPong;
-		this.pingPong.game_window.addWindowListener(this);
+	public WindowHandler(Main main){
+		this.main=main;
+		this.main.addWindowListener(this);
 	}
+	
 
 	@Override
 	public void windowActivated(WindowEvent event) {
@@ -29,9 +30,9 @@ public class WindowHandler implements WindowListener{
 	//This function will get executed when user will be closing the window
 	@Override
 	public void windowClosing(WindowEvent event) {
-		Packet01Disconnect packet = new Packet01Disconnect(this.pingPong.paddle23.getuserName());
+		Packet01Disconnect packet = new Packet01Disconnect(PingPong.paddle23.getuserName());
 		//send the disconnect packet to the actual server 
-		packet.writeData(this.pingPong.socketClient);
+		packet.writeData(PingPong.socketClient);
 	}
 
 	@Override
@@ -53,6 +54,6 @@ public class WindowHandler implements WindowListener{
 	public void windowOpened(WindowEvent event) {
 		
 	}
-*/
+
 
 }
