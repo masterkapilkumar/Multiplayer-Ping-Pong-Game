@@ -10,26 +10,22 @@ import cyberthieves.PingPong;
 
 public class paddle2 extends Mob {
 	
-	public int count=0;
+//	public int count=0;
 	public String userName;
 	public float x;
 	public float y;
 	public int width=15;
 	public int  height=80;
-	public int speed=0;
+//	public int speed=0;
 	public int type = 0;
 	
 //	InputHandler input;
 	
 	public double length=height;
 	
-	boolean goingup=false;
-	boolean goingdown=false;
+//	boolean goingup=false;
+//	boolean goingdown=false;
 	boolean haha = false;
-	
-	
-	
-	
 	
 	public Rectangle margin;	
 	public paddle2 (String userName,int x,int y,int type)
@@ -42,9 +38,9 @@ public class paddle2 extends Mob {
 		margin=new Rectangle(x,y,width,height);
 		margin.setBounds(x,y,width,height);
 	}
-	
+
 	public void update(PingPong game)
-	{	
+	{
 		if(game.upPressed){
 			if(y>=0){
 				y--;
@@ -54,19 +50,17 @@ public class paddle2 extends Mob {
 			}
 		}
 		if(game.downPressed){
-			if(y<332){
+			if(y<game.getHeight()){
 				y++;
 			}
 			else{
-				y=331;
+				y=game.getHeight()-1;
 			}
-			
+
 		}
-		
-		
-		
+
 		if(type == 0){
-			if(game.ball.x + game.ball.speed_x <= this.x+this.width){			
+			if(game.ball.x + game.ball.speed_x <= this.x+this.width){
 				if(game.ball.y < (this.y-game.ball.diameter) || (game.ball.y >this.y+this.height)){
 					if(game.ball.x < this.x){
 						haha = true;
@@ -75,41 +69,14 @@ public class paddle2 extends Mob {
 				else {
 					game.ball.speed_x = (-1)*game.ball.speed_x;
 					if(game.upPressed){
-						if(game.ball.speed_y <= -1.20){						
+						if(game.ball.speed_y <= -1.20){
 						}
 						else{
 							game.ball.speed_y = game.ball.speed_y - (float)0.1;
 						}
 					}
 					else if(game.downPressed){
-						if(game.ball.speed_y >= 1.20){						
-						}
-						else{
-							game.ball.speed_y = game.ball.speed_y + (float)0.1;
-						}
-					}
-					else{}
-				}
-			}	
-		}
-		else if(type ==1){
-			if(game.ball.x + game.ball.speed_x >= this.x-this.width){			
-				if(game.ball.y < (this.y-game.ball.diameter) || (game.ball.y >this.y+this.height)){
-					if(game.ball.x > this.x+this.width){
-						haha = true;
-					}
-				}
-				else {
-					game.ball.speed_x = (-1)*game.ball.speed_x;
-					if(game.upPressed){
-						if(game.ball.speed_y <= -1.20){						
-						}
-						else{
-							game.ball.speed_y = game.ball.speed_y - (float)0.1;
-						}
-					}
-					else if(game.downPressed){
-						if(game.ball.speed_y >= 1.20){						
+						if(game.ball.speed_y >= 1.20){
 						}
 						else{
 							game.ball.speed_y = game.ball.speed_y + (float)0.1;
@@ -119,8 +86,35 @@ public class paddle2 extends Mob {
 				}
 			}
 		}
-		
-				
+		else if(type ==1){
+			if(game.ball.x + game.ball.speed_x >= this.x-this.width){
+				if(game.ball.y < (this.y-game.ball.diameter) || (game.ball.y >this.y+this.height)){
+					if(game.ball.x > this.x+this.width){
+						haha = true;
+					}
+				}
+				else {
+					game.ball.speed_x = (-1)*game.ball.speed_x;
+					if(game.upPressed){
+						if(game.ball.speed_y <= -1.20){
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y - (float)0.1;
+						}
+					}
+					else if(game.downPressed){
+						if(game.ball.speed_y >= 1.20){
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y + (float)0.1;
+						}
+					}
+					else{}
+				}
+			}
+		}
+
+
 	}
 	public void renderPaddle(Graphics g)
 	{		

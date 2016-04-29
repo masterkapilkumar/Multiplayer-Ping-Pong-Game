@@ -5,8 +5,10 @@ import java.awt.event.WindowListener;
 
 import cyberthieves.net.packets.Packet01Disconnect;
 
+public class WindowHandler {
+/*
 public class WindowHandler implements WindowListener{
-	
+
 	private final PingPong pingPong;
 	
 	public WindowHandler(PingPong pingPong){
@@ -51,5 +53,6 @@ public class WindowHandler implements WindowListener{
 	public void windowOpened(WindowEvent event) {
 		
 	}
+*/
 
 }
