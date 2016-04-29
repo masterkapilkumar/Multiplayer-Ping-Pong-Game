@@ -20,7 +20,7 @@ public class Packet00Login extends Packet {
 		this.userName = userName ;
 	}
 	
-	public Packet00Login(String username, int x, int y) {
+	public Packet00Login(String userName, int x, int y) {
         super(00);
         this.userName = userName;
         this.x = x;

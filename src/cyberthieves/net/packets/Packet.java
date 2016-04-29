@@ -5,7 +5,7 @@ import cyberthieves.net.GameServer;
 
 public abstract  class Packet {
 	public static enum PacketTypes {
-		INVALID(-1), LOGIN(00), DISCONNECT(01);
+		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVEP(02), MOVEB(03);
 		
 		private int packetId;
 		private PacketTypes(int packetId){

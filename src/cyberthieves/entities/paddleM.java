@@ -7,8 +7,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.net.InetAddress;
 
-import cyberthieves.Main;
 import cyberthieves.PingPong;
+import cyberthieves.net.packets.Packet02MoveP;
 
 public class paddleM extends paddle2 {
 	
@@ -16,20 +16,21 @@ public class paddleM extends paddle2 {
 	public int port;
 	
 	
-//	public int count=0;
+	public int count=0;
 	public float x;
 	public float y;
 	public int width=15;
 	public int  height=80;
-//	public int speed=0;
+	public int speed=0;
 	public int type = 0;
+	public String userName;
 	
 //	InputHandler input;
 	
 	public double length=height;
 	
-//	boolean goingup=false;
-//	boolean goingdown=false;
+	boolean goingup=false;
+	boolean goingdown=false;
 	boolean haha = false;	
 	public Rectangle margin;	
 	public paddleM(String userName,int type,InetAddress ipAddress, int port)
@@ -41,80 +42,101 @@ public class paddleM extends paddle2 {
 			this.y = 10;
 		}
 		else{
-			this.x = Main.windowWidth-10-width;
+			this.x = 900-10;
 			this.y = 10;
 		}
 		this.type = type;
 		this.ipAddress = ipAddress;
 		this.port = port;
+		this.userName = userName;
 		margin=new Rectangle((int)this.x,(int)this.y,width,height);
 		margin.setBounds((int)this.x,(int)this.y,width,height);
 	}
 	
 	public void update(PingPong game)
 	{	
+		boolean moved = false;
 		if(type==game.type){
 			if(game.upPressed){
 				if(y>=0){
 					y--;
+					moved = true;
 				}
 				else{
 					y=0;
 				}
-			}
-			if(game.downPressed){
-				if(y+height<game.getHeight()){
-					y++;
-				}
-				else{
-					y=game.getHeight()-1-height;
-				}
 				
 			}
+			if(game.downPressed){
+				if(y<332){
+					y++;
+					moved = true;
+				}
+				else{
+					y=331;
+				}				
+			}			
+		}
+		
+		if(moved){
+			
+			Packet02MoveP packet = new Packet02MoveP(this.userName,this.x,this.y);
+			packet.writeData(game.socketClient);
 		}
 		
 		
+		
 		if(type == 0){
-			if(PingPong.Ball.x + PingPong.Ball.speed_x <= this.x+this.width){
-				if(PingPong.Ball.y < (this.y-PingPong.Ball.diameter) || (PingPong.Ball.y >this.y+this.height)){
-					if(PingPong.Ball.x < this.x){
+			if(game.ball.x + game.ball.speed_x <= this.x+this.width){			
+				if(game.ball.y < (this.y-game.ball.diameter) || (game.ball.y >this.y+this.height)){
+					if(game.ball.x < this.x){
 						haha = true;
 					}
 				}
 				else {
-					PingPong.Ball.speed_x = (-1)*PingPong.Ball.speed_x;
+					game.ball.speed_x = (-1)*game.ball.speed_x;
 					if(game.upPressed){
-						if(PingPong.Ball.speed_y > -1.20){
-							PingPong.Ball.speed_y = PingPong.Ball.speed_y - (float)0.1;
+						if(game.ball.speed_y <= -1.20){						
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y - (float)0.1;
 						}
 					}
 					else if(game.downPressed){
-						if(PingPong.Ball.speed_y < 1.20){
-							PingPong.Ball.speed_y = PingPong.Ball.speed_y + (float)0.1;
+						if(game.ball.speed_y >= 1.20){						
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y + (float)0.1;
 						}
 					}
+					else{}
 				}
 			}	
 		}
 		else if(type ==1){
-			if(PingPong.Ball.x + PingPong.Ball.speed_x >= this.x-this.width){
-				if(PingPong.Ball.y < (this.y-PingPong.Ball.diameter) || (PingPong.Ball.y >this.y+this.height)){
-					if(PingPong.Ball.x > this.x+this.width){
+			if(game.ball.x + game.ball.speed_x >= this.x-this.width){			
+				if(game.ball.y < (this.y-game.ball.diameter) || (game.ball.y >this.y+this.height)){
+					if(game.ball.x > this.x+this.width){
 						haha = true;
 					}
 				}
 				else {
-					PingPong.Ball.speed_x = (-1)*PingPong.Ball.speed_x;
+					game.ball.speed_x = (-1)*game.ball.speed_x;
 					if(game.upPressed){
-						if(PingPong.Ball.speed_y > -1.20){
-							PingPong.Ball.speed_y = PingPong.Ball.speed_y - (float)0.1;
+						if(game.ball.speed_y <= -1.20){						
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y - (float)0.1;
 						}
 					}
 					else if(game.downPressed){
-						if(PingPong.Ball.speed_y < 1.20){
-							PingPong.Ball.speed_y = PingPong.Ball.speed_y + (float)0.1;
+						if(game.ball.speed_y >= 1.20){						
+						}
+						else{
+							game.ball.speed_y = game.ball.speed_y + (float)0.1;
 						}
 					}
+					else{}
 				}
 			}
 		}

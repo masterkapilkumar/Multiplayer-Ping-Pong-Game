@@ -10,23 +10,23 @@ import java.net.UnknownHostException;
 import cyberthieves.PingPong;
 import cyberthieves.entities.paddleM;
 import cyberthieves.net.packets.Packet;
+import cyberthieves.net.packets.Packet.PacketTypes;
 import cyberthieves.net.packets.Packet00Login;
 import cyberthieves.net.packets.Packet01Disconnect;
-import cyberthieves.net.packets.Packet.PacketTypes;
+import cyberthieves.net.packets.Packet02MoveP;
+import cyberthieves.net.packets.Packet03MoveB;
 
 public class GameClient extends Thread {
-	private InetAddress ipAddress;
+	public InetAddress ipAddress;
 	private DatagramSocket socket;
 	private PingPong pingPong;
 	
-	public GameClient(PingPong pingPong,String ipAddress){
+	public GameClient(PingPong pingPong,InetAddress ipAddress){
 		this.pingPong = pingPong;
 		try {
 			this.socket = new DatagramSocket();		
-			this.ipAddress = InetAddress.getByName(ipAddress);
+			this.ipAddress = ipAddress;
 		} catch (SocketException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 	}
@@ -34,23 +34,19 @@ public class GameClient extends Thread {
 	public void run(){
 		while(true){
 			
-			byte[] data = new byte[10];
-			DatagramPacket packet = new DatagramPacket(data,data.length);
-			
+			byte[] data = new byte[100];
+			DatagramPacket packet = new DatagramPacket(data,data.length);			
 			try {
 				socket.receive(packet);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}	
-			
+			}		
 			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());
-//			System.out.println("SERVER >"+ new String(packet.getData()).trim());
 		}
 	}
 	
 	private void parsePacket(byte[] data, InetAddress address, int port) {
 		String message = new String(data).trim();
-//		System.out.println(message+" this is the message");
 		PacketTypes type = Packet.lookupPacket(message.substring(0,2));
 		Packet packet = null;
 		switch (type){
@@ -59,26 +55,39 @@ public class GameClient extends Thread {
 				break;
 			case LOGIN:	
 				packet = new Packet00Login(data);
-				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has joined the game...");				
-//				if(address.getHostAddress().equalsIgnoreCase("127.0.0.1))
-				System.out.println(pingPong.allPaddle.size()+" this is while creating the client");
-				paddleM paddle33=null;
-				if(pingPong.socketServer!=null){
-					paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.allPaddle.size(),address,port);
-				}
-				else{
-					paddle33 = new paddleM(((Packet00Login)packet).getUserName(),1-pingPong.allPaddle.size(),address,port);
-				}				
-				pingPong.allPaddle.add(paddle33);
+				handleLogin((Packet00Login)packet, address,port);			
 				break;
 			case DISCONNECT:
 				packet = new Packet01Disconnect(data);
 				System.out.println("You left the game...");
 				pingPong.allPaddle.remove(1);
 				break;
+			case MOVEB:
+				packet = new Packet03MoveB(data);
+				this.handleBallMove((Packet03MoveB)packet);
+				break;
+			case MOVEP:
+				packet = new Packet02MoveP(data);
+				this.handlePlayerMove((Packet02MoveP)packet);
+				break;
 		}
 	}
 	
+	private void handleLogin(Packet00Login packet, InetAddress address, int port) {
+		
+		System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has joined the game...");
+		paddleM paddle33= null;
+		if(pingPong.socketServer!=null){
+			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.allPaddle.size(),address,port);
+		}
+		else{
+			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),1-pingPong.allPaddle.size(),address,port);
+		}				
+		pingPong.allPaddle.add(paddle33);
+	}
+	
+
+	//basic function to send data
 	public void sendData(byte[] data){
 		DatagramPacket packet = new DatagramPacket(data,data.length,ipAddress,1729);
 		try {
@@ -87,4 +96,15 @@ public class GameClient extends Thread {
 			e.printStackTrace();
 		}
 	}
+	
+	//has to update in the client about the move of others
+	private void handlePlayerMove(Packet02MoveP packet) {
+		this.pingPong.movePaddle(packet.getUserName(),packet.getX(), packet.getY());
+	}
+	
+	//this function is to handle the move of the ball
+	private void handleBallMove(Packet03MoveB packet) {		
+		this.pingPong.moveBall(packet.getX(),packet.getY());
+	}
+
 }

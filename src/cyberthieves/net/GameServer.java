@@ -9,19 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cyberthieves.PingPong;
+import cyberthieves.entities.Ball;
 import cyberthieves.entities.paddleM;
 import cyberthieves.net.packets.Packet;
 import cyberthieves.net.packets.Packet.PacketTypes;
 import cyberthieves.net.packets.Packet00Login;
 import cyberthieves.net.packets.Packet01Disconnect;
+import cyberthieves.net.packets.Packet02MoveP;
+import cyberthieves.net.packets.Packet03MoveB;
 
 public class GameServer extends Thread{
 	private DatagramSocket socket;
-	private PingPong pingPong;
 	public List<paddleM> connectedPlayers = new ArrayList<paddleM>();
-	
+	public Ball ball = new Ball(100,100);
+		
 	public GameServer(PingPong pingPong){
-		this.pingPong = pingPong;
 		try {
 			this.socket = new DatagramSocket(1729);		
 		} catch (SocketException e) {
@@ -31,7 +33,7 @@ public class GameServer extends Thread{
 	
 	public void run(){
 		while(true){
-			byte[] data = new byte[1024];
+			byte[] data = new byte[100];
 			DatagramPacket packet = new DatagramPacket(data,data.length);
 			try {
 				socket.receive(packet);
@@ -54,8 +56,20 @@ public class GameServer extends Thread{
 			case LOGIN:					
 				packet = new Packet00Login(data);
 				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has connected2...");
-				paddleM paddle33 = new paddleM(((Packet00Login)packet).getUserName(),0,address,port);
+				paddleM paddle33 = new paddleM(((Packet00Login)packet).getUserName().trim(),0,address,port);
 				this.addConnection(paddle33,((Packet00Login)packet));
+				break;
+			case MOVEB:
+				packet = new Packet03MoveB(data);
+//				System.out.println(((Packet03MoveB)packet).getUserName()+"has moved to "
+//						+((Packet03MoveB)packet).getX()+","+((Packet03MoveB)packet).getY());
+				this.handleBallMove(((Packet03MoveB)packet));
+				break;
+			case MOVEP:
+				packet = new Packet02MoveP(data);
+//				System.out.println(((Packet02MoveP)packet).getUserName()+"has moved to "
+//						+((Packet02MoveP)packet).getX()+","+((Packet02MoveP)packet).getY());
+				this.handlePlayerMove(((Packet02MoveP)packet));				
 				break;
 			case DISCONNECT:
 				packet = new Packet01Disconnect(data);
@@ -63,7 +77,7 @@ public class GameServer extends Thread{
 				this.removeConnection((Packet01Disconnect)packet);
 				break;
 		}
-	}
+	}	
 
 	//this is to build connection among the players
 	public void addConnection(paddleM paddle33, Packet00Login packet) {
@@ -82,14 +96,15 @@ public class GameServer extends Thread{
 			else{
 				sendData(packet.getData(),p.ipAddress,p.port);
 				packet = new Packet00Login(p.getuserName(), (int)p.x, (int)p.y);
-                sendData(packet.getData(), paddle33.ipAddress, paddle33.port);
-				
+                sendData(packet.getData(), paddle33.ipAddress, paddle33.port);				
 			}		
 		}
 
 		if(!alreadyConnected){				
-			this.connectedPlayers.add(paddle33);
-		}
+			this.connectedPlayers.add(paddle33);			
+		}		
+            
+		
 	}
 	
 	//this function actually removes the user once disconnected from the game
@@ -97,6 +112,27 @@ public class GameServer extends Thread{
 			this.connectedPlayers.remove(this.getPaddleIndex(packet.getUserName()));
 			packet.writeData(this);
 			
+	}
+	
+	//this function is to handle the movement of the ball
+	private void handleBallMove(Packet03MoveB packet) {
+		if(packet.getUserName()!=null){
+			this.ball.x = packet.getX();
+			this.ball.y = packet.getY();
+			packet.writeData(this);
+		}
+	}
+	
+	//this function handles the movement of the players and helps in setting communication between them
+	private void handlePlayerMove(Packet02MoveP packet) {
+		
+		//check if that player exists
+		if(getPaddle(packet.getUserName())!=null){
+			int index = getPaddleIndex(packet.getUserName());
+			this.connectedPlayers.get(index).x = packet.getX();
+			this.connectedPlayers.get(index).y = packet.getY();
+			packet.writeData(this);
+		}
 	}
 	
 	
@@ -111,16 +147,16 @@ public class GameServer extends Thread{
 	}
 	
 	//loop through all the connected players and return the index of the player with the given user name
-		public int getPaddleIndex(String userName){
-			int index = 0;
-			for(paddleM p: this.connectedPlayers){
-				if(p.userName.equals(userName)){
-					break;
-				}
-				index++;
+	public int getPaddleIndex(String userName){
+		int index = 0;
+		for(paddleM p: this.connectedPlayers){
+			if(p.userName.equals(userName)){
+				break;
 			}
-			return index;
+			index++;
 		}
+		return index;
+	}
 
 	public void sendData(byte[] data , InetAddress ipAddress, int port){
 		DatagramPacket packet = new DatagramPacket(data,data.length,ipAddress,port);

@@ -23,7 +23,7 @@ public class compu {
 	boolean goingup=false;
 	boolean goingdown=false;
 	
-	Rectangle margin;
+	public Rectangle margin;
 	
 	public compu(int x,int y)
 	{
@@ -39,13 +39,13 @@ public class compu {
 		margin.setBounds(x,y,width,height);
 		Random random=new Random();
 		int ra=random.nextInt(10);
-		if (game.Ball.y>y)
+		if (game.ball.y>y)
 		{
 			if(ra<5&& y+ra+height<game.getHeight())
 			y+=ra;
 				
 		}
-		else if (game.Ball.y<y)
+		else if (game.ball.y<y)
 		{
 			
 			if(ra>5 && y-ra+5<game.getHeight())

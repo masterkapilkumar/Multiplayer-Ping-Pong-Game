@@ -1,20 +1,26 @@
-package cyberthieves;
+package cyberthieves.entities;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 
-public class ball {
-//	int p=0;
+import cyberthieves.PingPong;
+import cyberthieves.net.packets.Packet03MoveB;
+public class Ball extends Mob{
+	int p=0;
+	public String userName="ball";
 	public float x;
 	public float y;
 	public int diameter=20;
 	public float speed_x,speed_y;
-	float vel=(float)1.0;
+	public float vel=(float)1.0;
 	public Rectangle ball_shape;
 	boolean paddlecollide=false;
-	public ball(int x,int y)
+	public Ball(int x,int y)
 	{	
-		
+		super("ball",x,y,(int)(1.0));
 		this.x=x;
 		this.y=y;
 		speed_x=vel;
@@ -26,43 +32,47 @@ public class ball {
 	
 	public void update(PingPong game)
 	{
-		//System.out.println(speed_y);
 		ball_shape.setBounds((int)x,(int)y,diameter,diameter);
-		collision_with_paddle();
+		collision_with_paddle(game);
+//		if(game.socketClient != null && game.socketServer != null){
+//			speed_x = 2;
+//			speed_y = 2;
+//		}
+//		else{
+//			speed_x = 1;
+//			speed_y = 1;
+//		}
 		
 		{
-		if(x<=0){
-			speed_x=(-1)*speed_x;
-//			game.paddle22.length-=5;
-			System.out.println("touchdown");
-		}
-		else if (x+diameter>=game.getWidth())
-		{
-//			game.complayer.length-=5;
-			speed_x=-1*speed_x;
-			
-		}
-		
-		if (y+speed_y<=0 || y+speed_y+diameter >= game.getHeight()){
-			
-//			System.out.println("Before "+speed_y);
-			if(speed_y !=0){
-				speed_y=(-1)*speed_y;
-				y = this.y+speed_y;
+			x+=(speed_x);
+			y+=(speed_y);
+			if(x<=0){
+				speed_x=(-1)*speed_x;
+//				System.out.println("touchdown");
 			}
-			else 
-				speed_y = (float)0.75;
-			
-//			System.out.println("after "+speed_y);
-		}	
+			else if (x+diameter>=game.getWidth())
+			{
+				speed_x=-1*speed_x;
+				
+			}			
+			if (y+speed_y<=0 || y+speed_y+diameter >= 411){			
+				if(speed_y !=0){
+					speed_y=(-1)*speed_y;
+					y = this.y+speed_y;
+				}
+				else 
+					speed_y = (float)0.75;			
+			}			
 		
 		}
 		paddlecollide=false;
-		x+=(speed_x);
-		y+=(speed_y);
+		
+		
+		Packet03MoveB packet = new Packet03MoveB(this.userName, this.x, this.y);
+		packet.writeData(game.socketClient);
 			
 	}
-	private void collision_with_paddle()
+	private void collision_with_paddle(PingPong game)
 	{
 		paddlecollide=true;
 //		if (ball_shape.intersects(game.paddle22.margin))
@@ -86,8 +96,8 @@ public class ball {
 //			
 //			
 //		}
-		if(PingPong.complayer !=null){
-			if (ball_shape.intersects(PingPong.complayer.margin))
+		if(game.complayer !=null){
+			if (ball_shape.intersects(game.complayer.margin))
 			{
 				speed_x=-1*speed_x;
 				//speed_y= (speed_y+(game.complayer.speed));
@@ -105,17 +115,23 @@ public class ball {
 		
 		
 	}
+	
+	//What this function does is that it draws the ball
 	public void renderball(Graphics g)
 	{
 		Graphics2D g1=(Graphics2D)g;
 		
 		g1.setColor(Color.RED);
 		Ellipse2D oval=new Ellipse2D.Double(x,y,diameter,diameter);
-		g1.setPaint(Color.RED);
-		
-		g1.fill(oval);
-		
+		g1.setPaint(Color.RED);		
+		g1.fill(oval);		
 	}
-	
+
+	@Override
+	public boolean hasCollided(int xa, int ya) {
+		return false;
+	}
+
+		
 }
 
