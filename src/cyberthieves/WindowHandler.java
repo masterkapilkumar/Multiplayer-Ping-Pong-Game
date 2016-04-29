@@ -5,17 +5,16 @@ import java.awt.event.WindowListener;
 
 import cyberthieves.net.packets.Packet01Disconnect;
 
-//public class WindowHandler {
+
 
 public class WindowHandler implements WindowListener{
 
 	private final Main main;
 	
 	public WindowHandler(Main main){
-		this.main=main;
+		this.main = main;
 		this.main.addWindowListener(this);
 	}
-	
 
 	@Override
 	public void windowActivated(WindowEvent event) {

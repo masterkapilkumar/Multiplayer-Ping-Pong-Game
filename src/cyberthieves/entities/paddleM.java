@@ -13,6 +13,7 @@ import cyberthieves.net.packets.Packet02MoveP;
 
 public class paddleM extends paddle2 {
 
+	private static final long serialVersionUID = 1L;
 	public InetAddress ipAddress;
 	public int port;
 
@@ -22,6 +23,8 @@ public class paddleM extends paddle2 {
 	public float y;
 	public int width=15;
 	public int  height=80;
+	public int hWidth=80;
+	public int  hHeight=15;
 	public int speed=10;
 	public int type = 0;
 	public String userName;
@@ -38,20 +41,39 @@ public class paddleM extends paddle2 {
 	{
 		super(userName,10,10,1);
 
-		if(type == 0){
+		switch(type){
+		case 0: 
 			this.x = 10;
 			this.y = 10;
-		}
-		else{
+			break;
+		case 1: 
 			this.x = Main.windowWidth-10-width;
 			this.y = 10;
+			break;
+		case 2: 
+			this.x = 100;
+			this.y = 10;
+			break;
+		case 3:
+			this.x = 100;
+			System.out.println(Main.windowHeight+" : window height");
+			System.out.println(Main.windowHeight-50-hHeight+" : paddle position");
+			this.y = Main.windowHeight-45-hHeight;
 		}
+		
 		this.type = type;
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.userName = userName;
-		margin=new Rectangle((int)this.x,(int)this.y,width,height);
-		margin.setBounds((int)this.x,(int)this.y,width,height);
+		if(type == 0 || type ==1){
+			margin=new Rectangle((int)this.x,(int)this.y,width,height);
+			margin.setBounds((int)this.x,(int)this.y,width,height);
+		}
+		else if(type ==2 || type==3){
+			margin=new Rectangle((int)this.x,(int)this.y,hWidth,hHeight);
+			margin.setBounds((int)this.x,(int)this.y,hWidth,hHeight);
+		}
+		
 	}
 
 	public void update(PingPong game)
@@ -82,7 +104,7 @@ public class paddleM extends paddle2 {
 		if(moved){
 
 			Packet02MoveP packet = new Packet02MoveP(this.userName,this.x,this.y);
-			packet.writeData(game.socketClient);
+			packet.writeData(PingPong.socketClient);
 		}
 
 
@@ -137,13 +159,25 @@ public class paddleM extends paddle2 {
 	public void renderPaddle(Graphics g)
 	{
 		Graphics2D g1=(Graphics2D)g;
-		Rectangle2D rectang=new Rectangle2D.Double(x,y,width,height);
-		g1.setPaint(Color.BLACK);
-		g1.draw(rectang);
+		if(type ==0 || type==1){
+			Rectangle2D rectang=new Rectangle2D.Double(x,y,width,height);
+			g1.setPaint(Color.BLACK);
+			g1.draw(rectang);
 
-		Rectangle2D inner=new Rectangle2D.Double(x,y,width,length);
-		g1.setPaint(Color.BLUE);
-		g1.fill(inner);
+			Rectangle2D inner=new Rectangle2D.Double(x,y,width,height);
+			g1.setPaint(Color.BLUE);
+			g1.fill(inner);
+		}
+		else{
+			Rectangle2D rectang=new Rectangle2D.Double(x,y,hWidth,hHeight);
+			g1.setPaint(Color.BLACK);
+			g1.draw(rectang);
+
+			Rectangle2D inner=new Rectangle2D.Double(x,y,hWidth,hHeight);
+			g1.setPaint(Color.BLUE);
+			g1.fill(inner);
+		}
+		
 
 	}
 	@Override

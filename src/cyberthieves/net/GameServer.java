@@ -17,11 +17,13 @@ import cyberthieves.net.packets.Packet00Login;
 import cyberthieves.net.packets.Packet01Disconnect;
 import cyberthieves.net.packets.Packet02MoveP;
 import cyberthieves.net.packets.Packet03MoveB;
+import cyberthieves.net.packets.Packet04NumP;
 
 public class GameServer extends Thread{
 	private DatagramSocket socket;
 	public List<paddleM> connectedPlayers = new ArrayList<paddleM>();
 	public Ball ball = new Ball(100,100);
+	private boolean typeSent = false;
 		
 	public GameServer(PingPong pingPong){
 		try {
@@ -76,6 +78,11 @@ public class GameServer extends Thread{
 				System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet01Disconnect)packet).getUserName()+" has left the game...");
 				this.removeConnection((Packet01Disconnect)packet);
 				break;
+			case TYPE:
+				packet = new Packet04NumP(data);
+				if(packet.getData().toString().trim().equals("ping")){
+					sendData( ("04"+Integer.toString(PingPong.allPaddle.size())).getBytes(),address,port);
+				}
 		}
 	}	
 
@@ -135,6 +142,11 @@ public class GameServer extends Thread{
 		}
 	}
 	
+	//this function will help us to determine how many players are connected with the player
+	private void handleNumP(Packet04NumP packet) {
+		
+	}
+	
 	
 	//loop through all the connected players and send the player with the given user name
 	public paddleM getPaddle(String userName){
@@ -173,5 +185,31 @@ public class GameServer extends Thread{
 		for(paddleM p: connectedPlayers){
 			sendData(data,p.ipAddress,p.port);
 		}
+	}
+
+	//this is quite similar method like login but it has some differences
+	public void addNumData(Packet04NumP typePacket) {
+//		boolean alreadyConnected = false;
+//		//check whether a particular player is already connected or not
+//		for(paddleM p: this.connectedPlayers){
+//			if(typePacket.getUserName().equalsIgnoreCase(p.getuserName())){
+//				if(p.ipAddress == null){
+//					p.ipAddress = paddle33.ipAddress;
+//				}
+//				if(p.port==-1){
+//					p.port = paddle33.port;
+//				}
+//				alreadyConnected = true;
+//			}
+//			else{
+//				sendData(packet.getData(),p.ipAddress,p.port);
+//				packet = new Packet00Login(p.getuserName(), (int)p.x, (int)p.y);
+//                sendData(packet.getData(), paddle33.ipAddress, paddle33.port);				
+//			}		
+//		}
+//
+//		if(!alreadyConnected){				
+//			this.connectedPlayers.add(paddle33);			
+//		}	
 	}
 }

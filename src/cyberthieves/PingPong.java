@@ -22,6 +22,7 @@ import cyberthieves.entities.paddleM;
 import cyberthieves.net.GameClient;
 import cyberthieves.net.GameServer;
 import cyberthieves.net.packets.Packet00Login;
+import cyberthieves.net.packets.Packet04NumP;
 
 
 
@@ -33,14 +34,13 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public static paddleM paddle23;
 	public static compu complayer;
 	public Ball ball;
-	public  List<paddleM> allPaddle = new ArrayList<>();
+	public static List<paddleM> allPaddle = new ArrayList<>();
 	public static GameClient socketClient;
-	public  GameServer socketServer;
+	public static GameServer socketServer;
 	public  boolean upPressed=false;
 	public boolean downPressed = false;
 	private InetAddress ipAddress;
 	public int type;
-//	public WindowHandler windowHandler;
 	private Image backgroundImage;
 	private String userName;
 
@@ -67,7 +67,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public void update()
 	{		
 		for(int i =0;i<allPaddle.size();i++){
-			this.allPaddle.get(i).update(this);
+			allPaddle.get(i).update(this);
 		}
 		 if(complayer != null){
 			 complayer.update(this);
@@ -88,20 +88,21 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 		}
 		socketClient = new GameClient(this,ipAddress);
 		socketClient.start();
-//		windowHandler = new WindowHandler(this);
-		System.out.println(allPaddle.size() + " this is while creating first the server");
+		socketClient.sendData("ping".getBytes());
 		if(socketServer!=null){
 			this.type=0;
-			userName = JOptionPane.showInputDialog(this,"enter a user name");
+			userName = JOptionPane.showInputDialog(this,"enter a user name");			
 			paddle23 = new paddleM(this.userName,allPaddle.size(),null,-1);
 		}
 		else{
-			this.type=1;
+			this.type = socketClient.newType+1;
 			userName = JOptionPane.showInputDialog(this,"enter a user name");
-			paddle23 = new paddleM(this.userName,1-allPaddle.size(),ipAddress,1729);
+			paddle23 = new paddleM(this.userName,type,ipAddress,1729);
 		}
 		
-		Packet00Login loginPacket = new Packet00Login(paddle23.getuserName());
+		
+		//this is to send the type of the player to every other client that is connected while connection		
+		Packet00Login loginPacket = new Packet00Login(this.userName);		
 		allPaddle.add(paddle23);
 	    if(socketServer != null){	    	
 	    	socketServer.addConnection(paddle23,loginPacket);
@@ -109,7 +110,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	    loginPacket.writeData(socketClient);
 
 		new Thread(this).start();
-		Timer timer = new Timer(1000/30, this);
+		Timer timer = new Timer(1000/120, this);
 		timer.start();
 
 		
@@ -125,7 +126,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
 
 		for(int i =0;i<allPaddle.size();i++){
-			this.allPaddle.get(i).renderPaddle(g);
+			allPaddle.get(i).renderPaddle(g);
 		}		
 		if(complayer != null){
 			complayer.renderPaddle(g);
@@ -157,7 +158,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 
 	private int getPaddleIndex(String userName){
 		int index = 0;
-		for(paddleM p: this.allPaddle){
+		for(paddleM p: allPaddle){
 			if(p.userName.equals(userName)){
 				break;
 			}
@@ -169,24 +170,18 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public void movePaddle(String userName, float x, float y){
 		if(!(userName.equals(this.userName))){
 			int index = this.getPaddleIndex(userName);
-			{
-			this.allPaddle.get(index).x = x;
-			this.allPaddle.get(index).y = y;
-			}
+			allPaddle.get(index).x = x;
+			allPaddle.get(index).y = y;
 		}
 
-	}
+	}	
 	
-	
-	
-	
-	@Override
 	public void actionPerformed(ActionEvent e){
         this.update();
     }
 
 	public void moveBall(float x, float y) {
-		if(this.socketServer == null ){
+		if(socketServer == null ){
 			ball.x = x;
 			ball.y = y;
 		}

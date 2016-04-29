@@ -15,7 +15,7 @@ public class Ball extends Mob{
     public float y;
     public int diameter=20;
     public float speed_x,speed_y;
-    public float vel=10;
+    public float vel=5;
     public Rectangle ball_shape;
     boolean paddlecollide=false;
     public Ball(int x,int y)

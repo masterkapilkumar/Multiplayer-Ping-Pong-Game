@@ -10,21 +10,15 @@ import cyberthieves.PingPong;
 
 public class paddle2 extends Mob {
 	
-//	public int count=0;
 	public String userName;
 	public float x;
 	public float y;
 	public int width=15;
 	public int  height=80;
-//	public int speed=0;
 	public int type = 0;
 	
-//	InputHandler input;
 	
 	public double length=height;
-	
-//	boolean goingup=false;
-//	boolean goingdown=false;
 	boolean haha = false;
 	
 	public Rectangle margin;	

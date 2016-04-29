@@ -1,12 +1,15 @@
 package cyberthieves;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 public class Main extends JFrame {
 
@@ -16,9 +19,10 @@ public class Main extends JFrame {
     MainMenu menu;
     SplashScreen splash;
     static WindowHandler windowHandler;
+
     public static void main(String[] args){
         Main game = new Main();
-        windowHandler=new WindowHandler(game);
+        windowHandler = new WindowHandler(game);
         game.initialize();
     }
 

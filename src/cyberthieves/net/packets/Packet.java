@@ -5,7 +5,7 @@ import cyberthieves.net.GameServer;
 
 public abstract  class Packet {
 	public static enum PacketTypes {
-		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVEP(02), MOVEB(03);
+		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVEP(02), MOVEB(03), TYPE(04);
 		
 		private int packetId;
 		private PacketTypes(int packetId){
@@ -49,7 +49,7 @@ public abstract  class Packet {
 		}
 	}
 	
-	//this will take the int id and then check the type of the packet
+	//this will take the integer id and then check the type of the packet
 	public static PacketTypes lookupPacket(int id){
 		for(PacketTypes p : PacketTypes.values()){
 			if(p.getId()==id){

@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
 import cyberthieves.PingPong;
 import cyberthieves.entities.paddleM;
@@ -15,11 +14,13 @@ import cyberthieves.net.packets.Packet00Login;
 import cyberthieves.net.packets.Packet01Disconnect;
 import cyberthieves.net.packets.Packet02MoveP;
 import cyberthieves.net.packets.Packet03MoveB;
+import cyberthieves.net.packets.Packet04NumP;
 
 public class GameClient extends Thread {
 	public InetAddress ipAddress;
 	private DatagramSocket socket;
 	private PingPong pingPong;
+	public int newType;
 	
 	public GameClient(PingPong pingPong,InetAddress ipAddress){
 		this.pingPong = pingPong;
@@ -60,7 +61,7 @@ public class GameClient extends Thread {
 			case DISCONNECT:
 				packet = new Packet01Disconnect(data);
 				System.out.println("You left the game...");
-				pingPong.allPaddle.remove(1);
+				PingPong.allPaddle.remove(1);
 				break;
 			case MOVEB:
 				packet = new Packet03MoveB(data);
@@ -70,6 +71,10 @@ public class GameClient extends Thread {
 				packet = new Packet02MoveP(data);
 				this.handlePlayerMove((Packet02MoveP)packet);
 				break;
+			case TYPE:
+				packet = new Packet04NumP(data);
+				newType = Integer.parseInt(new String(packet.getData()).trim());
+				break;
 		}
 	}
 	
@@ -77,13 +82,13 @@ public class GameClient extends Thread {
 		
 		System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has joined the game...");
 		paddleM paddle33= null;
-		if(pingPong.socketServer!=null){
+		if(PingPong.socketServer!=null){
 			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.allPaddle.size(),address,port);
 		}
 		else{
 			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),1-pingPong.allPaddle.size(),address,port);
 		}				
-		pingPong.allPaddle.add(paddle33);
+		PingPong.allPaddle.add(paddle33);
 	}
 	
 
