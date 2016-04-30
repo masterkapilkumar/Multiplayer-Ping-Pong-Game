@@ -39,6 +39,8 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public static GameServer socketServer;
 	public  boolean upPressed=false;
 	public boolean downPressed = false;
+	public boolean leftPressed = false;
+	public boolean rightPressed = false;
 	private InetAddress ipAddress;
 	public int type;
 	private Image backgroundImage;
@@ -144,6 +146,14 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
         else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             downPressed = true;
         }
+        else if (e.getKeyCode()==KeyEvent.VK_LEFT)
+        {
+        	leftPressed=true;
+        }
+        else if (e.getKeyCode()==KeyEvent.VK_RIGHT)
+        {
+        	rightPressed=true;
+        }
     }
 
 
@@ -153,6 +163,12 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             downPressed = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            leftPressed = false;
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            rightPressed = false;
         }
     }
 
