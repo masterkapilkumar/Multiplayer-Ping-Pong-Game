@@ -42,7 +42,7 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 	public boolean leftPressed = false;
 	public boolean rightPressed = false;
 	private InetAddress ipAddress;
-	public int type;
+	public static int type;
 	private Image backgroundImage;
 	private String userName;
 
@@ -97,14 +97,13 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 			paddle23 = new paddleM(this.userName,allPaddle.size(),null,-1);
 		}
 		else{
-			this.type = socketClient.newType+1;
 			userName = JOptionPane.showInputDialog(this,"enter a user name");
 			paddle23 = new paddleM(this.userName,type,ipAddress,1729);
 		}
 		
 		
 		//this is to send the type of the player to every other client that is connected while connection		
-		Packet00Login loginPacket = new Packet00Login(this.userName);		
+		Packet00Login loginPacket = new Packet00Login(this.userName,(int)paddle23.x,(int)paddle23.y);		
 		allPaddle.add(paddle23);
 	    if(socketServer != null){	    	
 	    	socketServer.addConnection(paddle23,loginPacket);
@@ -201,6 +200,9 @@ public class PingPong extends JPanel implements Runnable,ActionListener, KeyList
 			ball.x = x;
 			ball.y = y;
 		}
+	}
+	public static void updateType(int numPlayers) {
+		type = numPlayers;
 	}
 
 }

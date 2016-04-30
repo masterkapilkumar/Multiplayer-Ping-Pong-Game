@@ -58,18 +58,48 @@ public class paddleM extends paddle2 {
 			this.height=15;
 		}
 		else if (type==3)
-		{this.width=80;
-		this.height=15;
+		{
 			this.x=Main.windowWidth/2;
 			this.y=Main.windowHeight-height-35;
+			this.width=80;
+			this.height=15;
 			
 		}
 		this.type = type;
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.userName = userName;
-		//margin=new Rectangle((int)this.x,(int)this.y,width,height);
-		//margin.setBounds((int)this.x,(int)this.y,width,height);
+	}
+	
+	//This is another constructor with the coordinates values sent
+	public paddleM(String userName,int x, int y,int type,InetAddress ipAddress, int port)
+	{		
+		super(userName,x,y,1);
+		this.x = x;
+		this.y =y;
+
+		if(type == 0){
+			this.width=15;
+			this.height=80;
+		}
+		else if (type==1){
+			this.width=15;
+			this.height=80;
+		}
+		else if (type==2)
+		{
+			this.width=80;
+			this.height=15;
+		}
+		else if (type==3)
+		{
+			this.width=80;
+			this.height=15;				
+		}
+		this.type = type;
+		this.ipAddress = ipAddress;
+		this.port = port;
+		this.userName = userName;
 	}
 
 	public void update(PingPong game)
@@ -342,7 +372,6 @@ public class paddleM extends paddle2 {
 	}
 	@Override
 	public boolean hasCollided(int xa, int ya) {
-
 		return false;
 	}
 }

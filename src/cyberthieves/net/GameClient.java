@@ -20,7 +20,7 @@ public class GameClient extends Thread {
 	public InetAddress ipAddress;
 	private DatagramSocket socket;
 	private PingPong pingPong;
-	public int newType;
+	public static int newType;
 	
 	public GameClient(PingPong pingPong,InetAddress ipAddress){
 		this.pingPong = pingPong;
@@ -38,11 +38,14 @@ public class GameClient extends Thread {
 			byte[] data = new byte[100];
 			DatagramPacket packet = new DatagramPacket(data,data.length);			
 			try {
+				
 				socket.receive(packet);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}		
+			}			
 			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());
+			
+			
 		}
 	}
 	
@@ -68,26 +71,26 @@ public class GameClient extends Thread {
 				this.handleBallMove((Packet03MoveB)packet);
 				break;
 			case MOVEP:
+
 				packet = new Packet02MoveP(data);
 				this.handlePlayerMove((Packet02MoveP)packet);
 				break;
 			case TYPE:
 				packet = new Packet04NumP(data);
-				newType = Integer.parseInt(new String(packet.getData()).trim());
+				this.handlePaddletype((Packet04NumP)packet);
 				break;
 		}
 	}
 	
+	private void handlePaddletype(Packet04NumP packet) {
+		PingPong.updateType(packet.getNumPlayers());
+	}
+
+	//It handles the login package 
 	private void handleLogin(Packet00Login packet, InetAddress address, int port) {
 		
 		System.out.println("["+ address.getHostAddress()+ ":"+port+"] "+ ((Packet00Login)packet).getUserName()+" has joined the game...");
-		paddleM paddle33= null;
-		if(PingPong.socketServer!=null){
-			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),pingPong.allPaddle.size(),address,port);
-		}
-		else{
-			paddle33 = new paddleM(((Packet00Login)packet).getUserName(),1-pingPong.allPaddle.size(),address,port);
-		}				
+		paddleM	paddle33 = new paddleM(packet.getUserName(),packet.getX(), packet.getY(),newType,address,port);			
 		PingPong.allPaddle.add(paddle33);
 	}
 	

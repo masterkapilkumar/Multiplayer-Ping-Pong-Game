@@ -41,8 +41,14 @@ public class GameServer extends Thread{
 				socket.receive(packet);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
-			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());			
+			}
+			
+			String messagePing = new String(packet.getData()).trim();
+			if(messagePing.equalsIgnoreCase("ping")){
+				sendData(("04type,"+PingPong.allPaddle.size()).getBytes(),packet.getAddress(),packet.getPort());
+			}
+			this.parsePacket(packet.getData(),packet.getAddress(),packet.getPort());	
+			
 		}
 	}
 	
@@ -79,10 +85,9 @@ public class GameServer extends Thread{
 				this.removeConnection((Packet01Disconnect)packet);
 				break;
 			case TYPE:
-				packet = new Packet04NumP(data);
-				if(packet.getData().toString().trim().equals("ping")){
-					sendData( ("04"+Integer.toString(PingPong.allPaddle.size())).getBytes(),address,port);
-				}
+//				packet = new Packet04NumP(data);
+//				this.handlePaddleType(packet);				
+				break;
 		}
 	}	
 
